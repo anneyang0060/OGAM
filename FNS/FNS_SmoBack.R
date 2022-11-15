@@ -73,7 +73,7 @@ compute_PQR<-function(beta0, beta, n, h, pd){
   
   P <- array(0, dim = c(pd*d+1, m^d))
   Q <- array(0, dim = c(pd*d+1, pd*d+1, m^d))
-  if(link!='identity'){R <- array(0, dim = c(pd*d+1, pd*d+1, pd*d+1, m^d))}
+  if(link!='identity'){Rt <- array(0, dim = c(pd*d+1, pd*d+1, pd*d+1, m^d))}else{Rt <-0}
   
   # Cartesian product of evaluation points
   idx_eval <- c()
@@ -84,8 +84,8 @@ compute_PQR<-function(beta0, beta, n, h, pd){
   # print(beta)
   
   for(i in 1:nrow(idx_eval))
-    {
-
+  {
+    
     idx1 <- idx_eval[i,]
     beta1 <- beta0; x <- c()
     for(si in 1:d){
@@ -113,45 +113,45 @@ compute_PQR<-function(beta0, beta, n, h, pd){
       side <- matrix(side[valid_idx,],length(valid_idx),pd*d+1) # matrix  of X(x)
       
       P[,i] <- -t(side)%*%matrix(q1(y1,beta_expand)*p,ncol=1)
-      # if(length(valid_idx)>1){mm <- diag(q2(beta_expand) * p)}else{mm <- q2(beta_expand) * p}
+      if(length(valid_idx)>1){mm <- diag(q2(beta_expand) * p)}else{mm <- q2(beta_expand) * p}
       
       if(link!='identity'){
-
-        for(ui in 1:(pd*d+1))
-          for(uj in 1:(pd*d+1)){
-            Q[ui,uj,i] <- -sum(q2(beta_expand) * p *side[,ui]*side[,uj])
-            for(uk in 1:(pd*d+1)){
-              R[ui,uj,uk,i] <- -0.5*sum(q3(beta_expand) * p *side[,ui]*side[,uj]*side[,uk])
-            }
-          }
-        # Q[,,i] <- -t(side)%*%mm%*%side
-        # for(uk in 1:(pd*d+1)){
-        #   R[,,uk,i] <- -0.5*t(side)%*%mm%*%(side*matrix(rep(side[,uk],ncol(side)),ncol=ncol(side)))
-        # }
+        
+        # for(ui in 1:(pd*d+1))
+        #   for(uj in 1:(pd*d+1)){
+        #     Q[ui,uj,i] <- -sum(q2(beta_expand) * p *side[,ui]*side[,uj])
+        #     for(uk in 1:(pd*d+1)){
+        #       R[ui,uj,uk,i] <- -0.5*sum(q3(beta_expand) * p *side[,ui]*side[,uj]*side[,uk])
+        #     }
+        #   }
+        Q[,,i] <- -t(side)%*%mm%*%side
+        for(uk in 1:(pd*d+1)){
+          Rt[,,uk,i] <- -0.5*t(side)%*%mm%*%(side*matrix(rep(side[,uk],ncol(side)),ncol=ncol(side)))
+        }
         
       }else{
         
-        for(ui in 1:(pd*d+1))
-          for(uj in 1:(pd*d+1)){
-            Q[ui,uj,i] <- -sum(q2(beta_expand) * p *side[,ui]*side[,uj])
-          }
-        # Q[,,i] <- -t(side)%*%mm%*%side
-        # R <- 0
+        # for(ui in 1:(pd*d+1))
+        #   for(uj in 1:(pd*d+1)){
+        #     Q[ui,uj,i] <- -sum(q2(beta_expand) * p *side[,ui]*side[,uj])
+        #   }
+        Q[,,i] <- -t(side)%*%mm%*%side
+        Rt <- 0
       }
       
     }
     
   }
   
-  res <- list(P,Q,R)
-  names(res) <- c('P', 'Q', 'R')
+  res <- list(P,Q,Rt)
+  names(res) <- c('P', 'Q', 'Rt')
   return(res)
   
 }
 
 ## compute_G_M_xi: Given beta(x), compute statistics G,M,xi
 # should input UVQR evaluated at the closest candidate chain
-compute_G_M_xi0 <- function(U_, V_, Q_, R_, P, Q, R, beta0, beta, n, N, h, pd){ 
+compute_G_M_xi0 <- function(U_, V_, Q_, R_, P, Q, Rt, beta0, beta, n, N, h, pd){ 
   
   ### compute beta evaluated at all evaluation points
   idx_eval <- c()
@@ -227,13 +227,13 @@ backfitting <-
       
       tt0 <- Sys.time()
       res_PQR <- compute_PQR(beta0, beta, n, h, pd)
-      P <- res_PQR$P; Q <- res_PQR$Q; R <- res_PQR$R
+      P <- res_PQR$P; Q <- res_PQR$Q; Rt <- res_PQR$Rt
       tt1 <- Sys.time()
       # print(paste0('PQR time=',difftime(tt1,tt0)))
       # print(P)
       
       # compute_G_M_xi0
-      res <- compute_G_M_xi0(U_, V_, Q_, R_, P, Q, R, beta0, beta, n, N, h, pd)
+      res <- compute_G_M_xi0(U_, V_, Q_, R_, P, Q, Rt, beta0, beta, n, N, h, pd)
       G <- res$G; M <- res$M; xi0 <- res$xi0
       # print('GM OK')
       
@@ -273,13 +273,13 @@ backfitting <-
         delta_inner1 <- sum(sapply(1:d, function(ii){sqrt(mean((xi[,ii]-xi_new[,ii])^2))}))
         
         print(paste('r=', r, 'delta_inner=', delta_inner1))
-        if(delta_inner1>10/(1+(K>1))) break
+        if(delta_inner1>10) break
         
         xi <- xi_new
       }
       
-      if(delta_inner1>10/(1+(K>1))) break
-      if(delta_outer1>10/(1+(K>1))) break
+      if(delta_inner1>10) break
+      if(delta_outer1>10) break
       
       
       # out update
@@ -318,9 +318,9 @@ update_stats <- function(U_,V_,Q_,R_, beta0,beta,eta,idx,n,N, pd,L){
   U <- rep(0, pd*d+1); P <- U
   Q <- matrix(0, pd*d+1, pd*d+1); V <- Q
   if(link!='identity'){
-    R <- array(0, dim = c(pd*d+1, pd*d+1, pd*d+1))
+    Rt <- array(0, dim = c(pd*d+1, pd*d+1, pd*d+1))
   }else{
-    R <- 0
+    Rt <- 0
   }
   
   idx_eval <- c()
@@ -332,7 +332,7 @@ update_stats <- function(U_,V_,Q_,R_, beta0,beta,eta,idx,n,N, pd,L){
     
     h <- eta[,l]
     res_PQR <- compute_PQR(beta0, beta, n, h, pd)
-    P <- res_PQR$P; Q <- res_PQR$Q; R <- res_PQR$R
+    P <- res_PQR$P; Q <- res_PQR$Q; Rt <- res_PQR$Rt
     
     for(i in 1:nrow(idx_eval)){
       
@@ -352,15 +352,15 @@ update_stats <- function(U_,V_,Q_,R_, beta0,beta,eta,idx,n,N, pd,L){
         
         ### compute U, V
         for(ui in 1:(pd*d+1)){
-          U[ui] <- P[ui,i] - sum(beta1*Q[ui,,i]) + matrix(beta1,1,pd*d+1) %*% R[ui,,,i] %*% matrix(beta1,pd*d+1,1)
-          V[ui,] <- Q[ui,,i] - 2*matrix(beta1,1,pd*d+1)%*%R[ui,,,i]
+          U[ui] <- P[ui,i] - sum(beta1*Q[ui,,i]) + matrix(beta1,1,pd*d+1) %*% Rt[ui,,,i] %*% matrix(beta1,pd*d+1,1)
+          V[ui,] <- Q[ui,,i] - 2*matrix(beta1,1,pd*d+1)%*%Rt[ui,,,i]
         }
         
         ### update U,V,Q,R
         U_[,i,l] <- (N-n)/N * U_[,i,idx[l]] + n/N * U
         V_[,,i,l] <- (N-n)/N * V_[,,i,idx[l]] + n/N * V
         Q_[,,i,l] <- (N-n)/N * Q_[,,i,idx[l]] + n/N * Q[,,i]
-        R_[,,,i,l] <- (N-n)/N * R_[,,,i,idx[l]] + n/N * R[,,,i]
+        R_[,,,i,l] <- (N-n)/N * R_[,,,i,idx[l]] + n/N * Rt[,,,i]
         
       }else{
         
@@ -388,17 +388,6 @@ update_stats <- function(U_,V_,Q_,R_, beta0,beta,eta,idx,n,N, pd,L){
   
 }
 
-
-#' function to conduct the online smooth backfitting 
-#' @param K the index of currently observed data block
-#' @param X,y the observations
-#' @param n the sample size of the block
-#' @param m number of evaluation points
-#' @param delta_inner,delta_outer permission error at training end for the inner and outer loops
-#' @param Max_iter maximum number of iterations
-#' @param band_select =TRUE if adopt data driven bandwidth selection; =FALSE if use pre-specified bandwidth
-#' @param C1 pre-specified constant for bandwidth, is used when band_select=FALSE
-#' @return a sequence of global statisstics and estimates
 # online gam
 ogam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select, K_band, C1=NULL, L=1, L_theta=0, L_sigma=0, pd1=1, pd2=3){
   
@@ -477,7 +466,7 @@ ogam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select,
       for(i in 1:d){
         centrds_theta[i,] <<- (centrds_theta[i,idx_theta] * (N-n) + eta_theta[i,] * n) / N
       }
-
+      
       idx_sigma <- sapply(1:L_sigma,function(l){
         which.min(abs(eta_sigma[1,l] - centrds_sigma[1,]))
       })
@@ -560,7 +549,7 @@ ogam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select,
     eta <- sapply(1:L, function(l){((L-l+1)/L)^(1/5) * h}) #dim = d*L
   }
   
-
+  
   # initial parametric estimate and combination rule
   if(K==1){
     
@@ -581,7 +570,7 @@ ogam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select,
     centrds <<- centrds
     
   }
-
+  
   t0 <<- Sys.time()
   # backfitting
   {
@@ -607,6 +596,7 @@ ogam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select,
   # print('update statistics OK')
   
 }
+
 
 # batch gam
 gam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select, K_band, C1=NULL, L=1, L_theta=1, L_sigma=1, pd1=1, pd2=3){
@@ -682,7 +672,7 @@ gam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select, 
         beta_theta <<- res_beta$beta
       }
       rm(res_beta)
-
+      
       res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma[,,idx_sigma[1]],V_sigma[,,,idx_sigma[1]],
                               Q_sigma[,,,idx_sigma[1]],R_sigma[,,,,idx_sigma[1]], n, N, h_sigma, pd1)
       if(K==1){rm(beta0_sigma, beta_sigma)}
@@ -717,11 +707,11 @@ gam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select, 
   
   # compute bandwidth and candidates
   h <<- Ch*N^(-1/5)
-
+  
   # initial parametric estimate and combination rule
   initial_res <- initial(X,y,h,eval_vec,pd1)
   beta0_est <<- initial_res$beta0; beta_est <<- initial_res$beta
-
+  
   # backfitting
   {
     res_beta <- backfitting(beta0_est, beta_est,U_[,,idx[1]],V_[,,,idx[1]],Q_[,,,idx[1]],R_[,,,,idx[1]], n, N, h, pd1)
@@ -731,6 +721,5 @@ gam <- function(K, X, y, n, m, delta_inner, delta_outer, Max_iter, band_select, 
     }
     rm(res_beta)
   }
-
+  
 }
-
