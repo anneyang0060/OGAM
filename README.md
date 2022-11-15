@@ -20,6 +20,11 @@
 
 ### Simulations
 
+The R scripts <font face="Candara Light">simulation1.R<font> and **simulation2.R** contain the code for the simulation study which computes the integrated mean square errors of the online and batch estimates as well as computing time, respectively. 
 
+The R scripts **simu1_figplot.R** and **simulation2_figplot.R** contain the code to generate table XXX and Figure XXX. 
+
+As the bandwidth selection is not our focus, all procedures of estimating the constants for bandwidths in the simulations and data applications are collected in the R script **supp-bandwidth_selection.R**. The corresponding results are stored in the directory *res*. One can load them directly when reproducing the numerical experiments.
 
 ### Data applications
+#### Credit
