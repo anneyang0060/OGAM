@@ -8,11 +8,11 @@ source('FNS/FNS_DataGene_Simu1.R')
 
 # parameters
 {
-  R <- 100
+  Nsim <- 100
   Kmax <- 1000
   sub_streams <- c(1,seq(20,Kmax,20))
   set.seed(2020)
-  sds <- ceiling(runif(R)*1e6)
+  sds <- ceiling(runif(Nsim)*1e6)
   n <- ceiling(rnorm(Kmax,500,10))
   d <- 2
   m <- 40 # No evalpoints
