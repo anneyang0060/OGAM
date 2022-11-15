@@ -5,8 +5,8 @@ library(doParallel)
 
 ############################### bandwidth selection for Simulation1 #########################
 rm(list = ls())
-source('FNS_SmoBack.R')
-source('FNS_DataGene_Simu1.R')
+source('FNS/FNS_SmoBack.R')
+source('FNS/FNS_DataGene_Simu1.R')
 
 # parameters
 {
@@ -334,8 +334,8 @@ source('FNS_DataGene_Simu1.R')
 
 ############################### bandwidth selection for Simulation2 #########################
 rm(list = ls())
-source('FNS_SmoBack.R')
-source('FNS_DataGene_Simu2.R')
+source('FNS/FNS_SmoBack.R')
+source('FNS/FNS_DataGene_Simu2.R')
 
 # parameters
 {
@@ -674,7 +674,7 @@ source('FNS_DataGene_Simu2.R')
 
 ############################### bandwidth selection for flight #########################
 rm(list = ls())
-source('FNS_SmoBack.R')
+source('FNS/FNS_SmoBack.R')
 
 #### parameter
 {
@@ -948,7 +948,7 @@ source('FNS_SmoBack.R')
 
 
 ############################### bandwidth selection for credit #########################
-source('FNS_SmoBack_credit.R')
+source('FNS/FNS_SmoBack_credit.R')
 
 # read in data
 {
