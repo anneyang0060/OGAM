@@ -20,11 +20,24 @@
 
 ### Simulations
 
-The R scripts <font face="Candara Light">simulation1.R<font> and **simulation2.R** contain the code for the simulation study which computes the integrated mean square errors of the online and batch estimates as well as computing time, respectively. 
+#### Simulation 1 and 2
 
-The R scripts **simu1_figplot.R** and **simulation2_figplot.R** contain the code to generate table XXX and Figure XXX. 
+The R scripts ***simulation1.R*** and ***simulation2.R*** contain the code for the simulation study which computes the integrated mean square errors of the online and batch estimates as well as computing time, respectively. 
 
-As the bandwidth selection is not our focus, all procedures of estimating the constants for bandwidths in the simulations and data applications are collected in the R script **supp-bandwidth_selection.R**. The corresponding results are stored in the directory *res*. One can load them directly when reproducing the numerical experiments.
+The R scripts ***simu1_figplot.R*** and ***simulation2_figplot.R*** contain the code to generate **table XXX** and **Figure XXX**. 
+
+As the bandwidth selection is not our focus, all procedures of estimating the constants for bandwidths in the simulations and data applications are collected in the R script ***supp-bandwidth_selection.R***. The corresponding results are stored in the directory *res*. One can load them directly when reproducing the numerical experiments.
+
+#### Simulation 3
+
+The R script ***Compare_Code/simuscript.R*** contains the code to compute the integrated mean square errors of different online nonparametric methods in the degenerated one-dimensional case.
+
+The R script ***Compare_Code/figplot.R*** contains the code to generate **Figure XXX**.
 
 ### Data applications
-#### Credit
+
+The R scripts ***flight_preprocess.R*** contains the code to preprocess the raw csv data which can be downloaded from the above link. The preprocessed data are given in the Directory *datasets*.
+
+The R scripts ***flight_main.R*** and ***credit_main.R*** contain the code which computes the online and batch estimates as well as computing time for the two datasets, respectively. 
+
+The R scripts ***flight_figplot.R*** and ***credit_figplot.R*** contain the code to generate **table XXX** and **Figure XXX**. 
