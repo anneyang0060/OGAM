@@ -1,6 +1,7 @@
-setwd('/home/yangy/OGAM_code_and_data')
+setwd('.../OGAM')
 library(latex2exp)
 
+######################### generate table 2 ################################
 d <- 4
 m <- 10 # No evalpoints
 eval_vec <- seq(0.1, 0.9, length.out = m)
@@ -39,7 +40,6 @@ Xtest <- as.matrix(data[(1:Nfull)[-idx],c('loan_amnt','int_rate','dti','annual_i
 rm(idx, data)
 
 
-######################### generate table 2 ################################
 ### predict
 load('res/credit/credit_online.Rdata')
 pre <- c()
@@ -88,7 +88,7 @@ round(tab[,c(2,4,6,11,12,14,17)],4)
 ################
 
 
-######################### generate Figure XXX--XXX !!! #############################
+######################### generate Figure 9 #############################
 load('res/credit/credit_online.Rdata')
 beta_o <- beta_store; to <- time
 load('res/credit/credit_batch.Rdata')
@@ -141,31 +141,3 @@ beta_b <- beta_store; tb <- time
   }
   dev.off()
 }
-
-# time
-{
-  pdf('fig/credit_time.pdf', height = 5, width= 7.5)
-  par(mai=c(0.5,0.6,0.3,0.3),omi=c(0.5,0.5,0,0),mfrow=c(1,1))
-  
-  idx=1:5
-  plot(sub_streams[idx],tb[idx],
-       ylim=c(0,max(tb[idx])),xlim=range(sub_streams[idx]),
-       type='l',lwd=1.5,lty=2,
-       xlab='',ylab = '',xaxt='n',font.main=1,
-       cex.lab=2.5,cex.axis=2,cex.main=2.5,family='serif')
-  lines(1:max(sub_streams[idx]),to[1:max(sub_streams[idx])])
-  mtext('time(secs)', side=2, line=3.5, adj=0.5, cex=2, family='serif')
-  mtext('blocks', side=1, line=3.5, adj=0.5, cex=2, family='serif')
-  axis(side=1,at=c(1,seq(20,80,20)), family='serif',
-       labels = c(1,seq(20,80,20)),cex.axis=2)
-  dev.off()
-}
-
-
-
-
-
-
-
-
-
