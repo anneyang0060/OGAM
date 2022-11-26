@@ -1,4 +1,4 @@
-setwd("/home/yangy/gam")
+setwd(".../OGAM")
 library(MASS)
 source('FNS/FNS_SmoBack_credit.R')
 
@@ -62,13 +62,9 @@ source('FNS/FNS_SmoBack_credit.R')
   K_band <- 200
   L <- 5
   link <- 'logit'
-  
-  # nn <- rep(1000,865)
-  # nn[1] <- 3000
   nn <- rep(1000,822)
   Kmax <- length(nn)
   nn[Kmax] <- Ntrain-sum(nn[1:(Kmax-1)])
-  
 }
 
 #### estimate
@@ -82,37 +78,27 @@ source('FNS/FNS_SmoBack_credit.R')
   band_select <- FALSE
   load('res/credit/online_constants_for_bandwidths.Rdata')
   NN <- 0
-  
+
   for (K in 1:Kmax) {
     
-    tt0 <- Sys.time()
     # generate data
     X <- as.matrix(Xtrain[(NN+1):(NN+nn[K]),])
     y <- ytrain[(NN+1):(NN+nn[K])]
+    NN <- NN + nn[K]
     
     # delta
     delta_inner <- 0.01*(K<=10)+0.001*(10<K&K<=50)+1e-04*(K>50)
-    # delta_outer <- 0.2*(K<=10)+0.1*(10<K&K<=30)+0.01*(30<K&K<=50)+1e-03*(K>50)
-    delta_outer <- 0.1*(K<=20)+0.01*(20<K&K<=50)+1e-03*(K>50)
-    # delta_outer <- 0.1
-    
-    # online gam
-    ogam(K, X, y, nn[K], m, delta_inner, delta_outer, Max_iter, band_select, K_band, C1=C1[,min(K,K_band)], L=L, L_theta=L_theta, L_sigma=L_sigma)
+    delta_outer <- delta_inner*10
+
+    t0<-Sys.time()
+    ogam(K, X, y, nn[K], m, delta_inner, delta_outer, Max_iter, band_select, K_band, C1[,min(K,K_band)], L)
+    t1<-Sys.time()
     
     # store
     band<-cbind(band,h)
     time <-c(time, as.numeric(t1-t0,unit='secs'))
     beta0_store <- c(beta0_store,beta0_est)
     beta_store <- cbind(beta_store,beta_est[,1:d])
-    
-    tt1 <- Sys.time()
-    print(paste0('K=',K,', m=',m,', time=', round(difftime(tt1, tt0, units = 'secs'),3)))
-    par(mfrow=c(2,2))
-    plot(beta_store[,4*K-3],type='l',main=paste0('K=',K)); plot(beta_store[,4*K-2],type='l')
-    plot(beta_store[,4*K-1], type='l'); plot(beta_store[,4*K],type='l')
-    
-    if(file.exists('credit_image.Rdata')){file.remove('credit_image.Rdata')}
-    save.image(file='credit_image.Rdata')
     
   }
   
@@ -143,7 +129,7 @@ source('FNS/FNS_SmoBack_credit.R')
       
       # delta
       delta_inner <- 0.01*(K<=10)+0.001*(10<K&K<=50)+1e-04*(K>50)
-      delta_outer <- delta_inner # 0.1*(K<=20)+0.01*(20<K&K<=50)+1e-03*(K>50)
+      delta_outer <- delta_inner*10
       
       tt0 <- Sys.time()
       # gam
