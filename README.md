@@ -24,7 +24,7 @@
 
 The R scripts ***simulation1.R*** and ***simulation2.R*** contain the code for the simulation study which computes the integrated mean square errors of the online and batch estimates as well as computing time, respectively. 
 
-The R scripts ***simu1_figplot.R*** and ***simulation2_figplot.R*** contain the code to generate **table XXX** and **Figure XXX**. 
+The R scripts ***simu_figplot.R*** and ***simulation2_figplot.R*** contain the code to generate **Figure 4-7**. 
 
 As the bandwidth selection is not our focus, all procedures of estimating the constants for bandwidths in the simulations and data applications are collected in the R script ***supp-bandwidth_selection.R***. The corresponding results are stored in the directory *res*. One can load them directly when reproducing the numerical experiments.
 
@@ -32,7 +32,7 @@ As the bandwidth selection is not our focus, all procedures of estimating the co
 
 The R script ***Compare_Code/simuscript.R*** contains the code to compute the integrated mean square errors of different online nonparametric methods in the degenerated one-dimensional case.
 
-The R script ***Compare_Code/figplot.R*** contains the code to generate **Figure XXX**.
+The R script ***Compare_Code/figplot.R*** contains the code to generate **Figure 1** of the supplement.
 
 ### Data applications
 
@@ -40,4 +40,4 @@ The R scripts ***flight_preprocess.R*** contains the code to preprocess the raw 
 
 The R scripts ***flight_main.R*** and ***credit_main.R*** contain the code which computes the online and batch estimates as well as computing time for the two datasets, respectively. 
 
-The R scripts ***flight_figplot.R*** and ***credit_figplot.R*** contain the code to generate **table XXX** and **Figure XXX**. 
+The R scripts ***flight_figplot.R*** contains the code to generate **table 1** and **Figure 8** and ***credit_figplot.R*** contains the code to generate **table 1** and **Figure 8** contains the code to generate **table 2** and **Figure 9**. 
