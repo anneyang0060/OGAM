@@ -1,4 +1,4 @@
-setwd('/home/yangy/OGAM_code_and_data')
+setwd('.../OGAM')
 library(latex2exp)
 ######################### generate table 1 ################################
 ### predict
@@ -43,7 +43,7 @@ for(K in 1:length(sub_streams)){
 tab<-rbind(tab,1-pre)
 round(tab[,c(1,2,4,6,7,11,16,18,10)],4)
 
-######################### generate Figure XXX--XXX !!! #############################
+######################### generate Figure 8 #############################
 rm(list=ls())
 sub_streams <- c(1,seq(10,50,10),seq(100,1000,100), seq(1500,2500,500),3283)
 load('res/flight/flight_full_online.Rdata')
@@ -101,31 +101,3 @@ beta_b <- beta_store; tb <- time
   }
   dev.off()
 }
-
-# time
-{
-  pdf('fig/flights_time.pdf', height = 5, width= 7.5)
-  par(mai=c(0.5,0.6,0.3,0.3),omi=c(0.5,0.5,0,0),mfrow=c(1,1))
-  
-  idx=1:4
-  plot(sub_streams[idx],tb[idx],
-       ylim=c(0,max(tb[idx])),xlim=range(sub_streams[idx]),
-       type='l',lwd=1.5,lty=2,
-       xlab='',ylab = '',xaxt='n',font.main=1,
-       cex.lab=2.5,cex.axis=2,cex.main=2.5,family='serif')
-  lines(1:max(sub_streams[idx]),to[1:max(sub_streams[idx])])
-  mtext('time(secs)', side=2, line=3.5, adj=0.5, cex=2, family='serif')
-  mtext('blocks', side=1, line=3.5, adj=0.5, cex=2, family='serif')
-  axis(side=1,at=c(1,seq(10,40,10)), family='serif',
-       labels = c(1,seq(10,40,10)),cex.axis=2)
-  dev.off()
-}
-
-
-
-
-
-
-
-
-
