@@ -35,7 +35,7 @@ source('FNS/FNS_DataGene_Simu2.R')
 load('res/sim2/online_constants_for_bandwidths.Rdata')
 for(L in c(3,5, 10))
 {
-  Mcl<-50
+  Mcl<-100
   cl<-makeCluster(Mcl)
   registerDoParallel(cl)
   oln<- foreach(sd=1:100) %dopar%{
