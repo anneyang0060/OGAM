@@ -1,4 +1,4 @@
-setwd('/home/yangy/OGAM_code_and_data')
+setwd('.../OGAM')
 
 library(dplyr)
 
