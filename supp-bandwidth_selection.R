@@ -1,5 +1,4 @@
-setwd('/home/yangy/gam')
-
+setwd('.../OGAM')
 library(foreach)
 library(doParallel)
 
@@ -46,7 +45,7 @@ source('FNS/FNS_DataGene_Simu1.R')
     V_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,m^d,L_sigma)) 
     Q_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,m^d,L_sigma))
     R_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,pd1*d+1,m^d,L_sigma))
-    C <- c(); theta_store <- c(); sigma_store <- c()
+    C <- c(); theta_store <- c(); sigma_store <- c(); N <- 0
   }  
   
   Mcl<-100
@@ -59,14 +58,14 @@ source('FNS/FNS_DataGene_Simu1.R')
     sub_sds<-ceiling(runif(Kmax)*10^5)
     ll <- which(sds==sd)
     
-    for (K in 1:Kmax) {
+    for (K in 1:K_band) {
       
       set.seed(sub_sds[K])
       
       # delta_stop
       {
-        delta_stop_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
-        delta_stop_outer <- delta_stop_inner
+        delta_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
+        delta_outer <- delta_inner
       }
       
       # generate data
@@ -81,12 +80,7 @@ source('FNS/FNS_DataGene_Simu1.R')
       
       # bandwidth selection
       {
-        
-        delta_stop_inner_sigma <- delta_stop_inner*10
-        delta_stop_outer_sigma <- delta_stop_inner_sigma
-        delta_stop_inner_theta <- delta_stop_inner_sigma*10
-        delta_stop_outer_theta <- delta_stop_inner_theta
-        
+
         h_theta <- G * N^(-1/7); h_sigma <- G * N^(-1/5)
         eta_theta <- sapply(1:L_theta, function(l){((L_theta-l+1)/L_theta)^(1/7) * h_theta})#dim: d*L
         eta_sigma <- sapply(1:L_sigma, function(l){((L_sigma-l+1)/L_sigma)^(1/5) * h_sigma})
@@ -131,7 +125,7 @@ source('FNS/FNS_DataGene_Simu1.R')
         {
           res_beta <- backfitting(beta0_theta, beta_theta,U_theta[,,idx_theta[1]],V_theta[,,,idx_theta[1]],
                                   Q_theta[,,,idx_theta[1]],R_theta[,,,,idx_theta[1]], n[K], N, h_theta, pd2)
-          if(res_beta$delta < delta_stop_outer_theta){
+          if(res_beta$delta < delta_outer){
             beta0_theta <- res_beta$beta0
             beta_theta <- res_beta$beta
           }
@@ -139,7 +133,7 @@ source('FNS/FNS_DataGene_Simu1.R')
           
           res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma[,,idx_sigma[1]],V_sigma[,,,idx_sigma[1]],
                                   Q_sigma[,,,idx_sigma[1]],R_sigma[,,,,idx_sigma[1]], n[K], N, h_sigma, pd1)
-          if(res_beta$delta < delta_stop_outer_sigma){
+          if(res_beta$delta < delta_outer){
             beta0_sigma <- res_beta$beta0
             beta_sigma <- res_beta$beta
           }
@@ -230,18 +224,14 @@ source('FNS/FNS_DataGene_Simu1.R')
     ll <- which(sds==sd)
     
     
-    for (K in 1:500) {
+    for (K in 1:K_band) {
       
       set.seed(sub_sds[K])
       
       # delta_stop
       {
-        delta_stop_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
-        delta_stop_outer <- delta_stop_inner
-        delta_stop_inner_sigma <- delta_stop_inner*10
-        delta_stop_outer_sigma <- delta_stop_inner_sigma
-        delta_stop_inner_theta <- delta_stop_inner_sigma*10
-        delta_stop_outer_theta <- delta_stop_inner_theta
+        delta_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
+        delta_outer <- delta_inner
       }
       
       # generate data
@@ -277,7 +267,7 @@ source('FNS/FNS_DataGene_Simu1.R')
         {
           res_beta <- backfitting(beta0_theta, beta_theta,U_theta,V_theta,
                                   Q_theta,R_theta, N, N, h_theta, pd2)
-          if(res_beta$delta < delta_stop_outer_theta){
+          if(res_beta$delta < delta_outer){
             beta0_theta <- res_beta$beta0
             beta_theta <- res_beta$beta
           }
@@ -285,7 +275,7 @@ source('FNS/FNS_DataGene_Simu1.R')
           
           res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma,V_sigma,
                                   Q_sigma,R_sigma, N, N, h_sigma, pd1)
-          if(res_beta$delta < delta_stop_outer_sigma){
+          if(res_beta$delta < delta_outer){
             beta0_sigma <- res_beta$beta0
             beta_sigma <- res_beta$beta
           }
@@ -343,18 +333,17 @@ source('FNS/FNS_DataGene_Simu2.R')
   Kmax <- 600
   sub_streams <- c(1,seq(20,Kmax,20))
   set.seed(2020)
-  sds <- ceiling(runif(R)*1e6)
   n <- ceiling(rnorm(Kmax,500,10))
   n[1] <- 2000
   pd1 <- 1; pd2 <- 3
   d <- 4
-  m <- 10 # No evalpoints
+  m <- 25 # No evalpoints
   eval_vec <- seq(0.05, 0.95, length.out = m)
   
   Max_iter <- 50
   N <- 0
-  beta_true <- cbind(beta1_fun(eval_vec), beta2_fun(eval_vec), beta3_fun(eval_vec), 
-                     beta4_fun(eval_vec), beta5_fun(eval_vec))
+  beta_true <- cbind(beta1_fun(eval_vec), beta2_fun(eval_vec),
+                      beta3_fun(eval_vec), beta4_fun(eval_vec))
   link <- 'identity'
   
   K_band=200
@@ -370,10 +359,10 @@ source('FNS/FNS_DataGene_Simu2.R')
 ######### online band select
 {
   
-  Mcl<-50
+  Mcl<-R
   cl<-makeCluster(Mcl)
   registerDoParallel(cl)
-  oln<- foreach(sd=sds) %dopar%{
+  oln<- foreach(sd=1:100) %dopar%{
     
     {
       U_theta <- array(0, dim = c(pd2*d+1,m^d,L_theta))
@@ -384,27 +373,19 @@ source('FNS/FNS_DataGene_Simu2.R')
       V_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,m^d,L_sigma)) 
       Q_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,m^d,L_sigma))
       R_sigma <- 0
-      C <- c(); theta_store <- c(); sigma_store <- c()
+      C <- c(); theta_store <- c(); sigma_store <- c(); N <- 0
       
     }  
     
     library(MASS)
     set.seed(sd) 
-    sub_sds<-ceiling(runif(Kmax)*10^5)
-    ll <- which(sds==sd)
     
     for (K in 1:K_band) {
-      
-      set.seed(sub_sds[K])
-      
+
       # delta_stop
       {
-        delta_stop_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
-        delta_stop_outer <- delta_stop_inner
-        delta_stop_inner_sigma <- delta_stop_inner*10
-        delta_stop_outer_sigma <- delta_stop_inner_sigma
-        delta_stop_inner_theta <- delta_stop_inner_sigma*10
-        delta_stop_outer_theta <- delta_stop_inner_theta
+        delta_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
+        delta_outer <- delta_inner
       }
       
       # generate data
@@ -466,7 +447,7 @@ source('FNS/FNS_DataGene_Simu2.R')
         {
           res_beta <- backfitting(beta0_theta, beta_theta,U_theta[,,idx_theta[1]],V_theta[,,,idx_theta[1]],
                                   Q_theta[,,,idx_theta[1]],R_theta, n[K], N, h_theta, pd2)
-          if(res_beta$delta < delta_stop_outer_theta){
+          if(res_beta$delta < delta_outer){
             beta0_theta <- res_beta$beta0
             beta_theta <- res_beta$beta
           }
@@ -474,7 +455,7 @@ source('FNS/FNS_DataGene_Simu2.R')
           
           res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma[,,idx_sigma[1]],V_sigma[,,,idx_sigma[1]],
                                   Q_sigma[,,,idx_sigma[1]],R_sigma[,,,,idx_sigma[1]], n[K], N, h_sigma, pd1)
-          if(res_beta$delta < delta_stop_outer_sigma){
+          if(res_beta$delta < delta_outer){
             beta0_sigma <- res_beta$beta0
             beta_sigma <- res_beta$beta
           }
@@ -483,7 +464,7 @@ source('FNS/FNS_DataGene_Simu2.R')
         
         # compute the constants
         {
-          deri <- beta_theta[,(2*d+1):(3*d)]^2
+          deri <- beta_theta[3:22,(2*d+1):(3*d)]^2
           beta_hat <- matrix(0,nrow(X),d); sigma2 <- rep(0,d)
           for(i in 1:d){
             beta_hat[,i] <- predict(smooth.spline(eval_vec,beta_sigma[,i]),X[,i])$y
@@ -544,10 +525,10 @@ source('FNS/FNS_DataGene_Simu2.R')
 
 ######### batch band select
 {
-  Mcl<-50
+  Mcl<-R
   cl<-makeCluster(Mcl)
   registerDoParallel(cl)
-  bth<- foreach(sd=sds) %dopar%{
+  bth<- foreach(sd=1:100) %dopar%{
     
     {
       U_theta <- array(0, dim = c(pd2*d+1,m^d))
@@ -564,17 +545,13 @@ source('FNS/FNS_DataGene_Simu2.R')
     X <- c(); y <- c()
     library(MASS)
     set.seed(sd) 
-    sub_sds<-ceiling(runif(Kmax)*10^5)
-    ll <- which(sds==sd)
-    
+
     for (K in 1:K_band) {
-      
-      set.seed(sub_sds[K])
-      
+
       # delta_stop
       {
-        delta_stop_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
-        delta_stop_outer <- delta_stop_inner
+        delta_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
+        delta_outer <- delta_inner
       }
       
       # generate data
@@ -614,7 +591,7 @@ source('FNS/FNS_DataGene_Simu2.R')
         {
           res_beta <- backfitting(beta0_theta, beta_theta,U_theta,V_theta,
                                   Q_theta,R_theta, N, N, h_theta, pd2)
-          if(res_beta$delta < delta_stop_outer){
+          if(res_beta$delta < delta_outer){
             beta0_theta <- res_beta$beta0
             beta_theta <- res_beta$beta
           }
@@ -622,7 +599,7 @@ source('FNS/FNS_DataGene_Simu2.R')
           
           res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma,V_sigma,
                                   Q_sigma,R_sigma, N, N, h_sigma, pd1)
-          if(res_beta$delta < delta_stop_outer){
+          if(res_beta$delta < delta_outer){
             beta0_sigma <- res_beta$beta0
             beta_sigma <- res_beta$beta
           }
@@ -685,7 +662,7 @@ source('FNS/FNS_SmoBack.R')
   
   Max_iter <- 10
   
-  K_band <- 600
+  K_band <- 300
   G <- rep(1,d)
   L_theta <- 5; L_sigma <- 5
   L <- 10
@@ -703,7 +680,7 @@ source('FNS/FNS_SmoBack.R')
     V_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,m^d,L_sigma)) 
     Q_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,m^d,L_sigma))
     R_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,pd1*d+1,m^d,L_sigma))
-    C <- c()
+    C <- c(); deri_ <- c(); sigma2_ <- c(); start <- 0; N <- 0
   }  
 
   library(MASS)
@@ -715,6 +692,7 @@ source('FNS/FNS_SmoBack.R')
       dates <- as.numeric(names(tab))[tab>=100]
       if(year>2000){dates <- as.numeric(names(tab))[tab>=4000]}
       Kmax <- length(dates) + start
+      if(Kmax>=600){Kmax <- 600}
     }
     
     for (K in (start+1):Kmax) {
@@ -726,11 +704,12 @@ source('FNS/FNS_SmoBack.R')
       X <- cbind(data$CRSDepTime,data$HistDelayRate)
       y <- data$Delayed
       n <- length(y) 
+      N <- N+n
       
       # delta_stop
       {
-        delta_stop_inner <- 0.1*(K<=10)+0.01*(10<K&K<=30)+1e-03*(K>30)
-        delta_stop_outer <- delta_stop_inner
+        delta_inner <- 0.1*(K<=10)+0.01*(10<K&K<=30)+1e-03*(K>30)
+        delta_outer <- delta_inner
       }
 
       # bandwidth selection
@@ -743,14 +722,12 @@ source('FNS/FNS_SmoBack.R')
           
           # generate initial estimate and bandwidth
           initial_res <- initial(X,y,h_theta,eval_vec,pd2)
-          beta0_theta_old <- initial_res$beta0; beta_theta_old <- initial_res$beta
           beta0_theta <- initial_res$beta0; beta_theta <- initial_res$beta
           idx_theta <- 1:L_theta
           centrds_theta <- eta_theta
           rm(initial_res)
           
           initial_res <- initial(X,y,h_sigma,eval_vec,pd1)
-          beta0_sigma_old <- initial_res$beta0; beta_sigma_old <- initial_res$beta
           beta0_sigma <- initial_res$beta0; beta_sigma <- initial_res$beta
           idx_sigma <- 1:L_sigma
           centrds_sigma <- eta_sigma
@@ -763,14 +740,14 @@ source('FNS/FNS_SmoBack.R')
             which.min(abs(eta_theta[1,l] - centrds_theta[1,]))
           })# idx of all d dimensions are the same, it is sufficient to compuute the first dim
           for(i in 1:d){
-            centrds_theta[i,] <- (centrds_theta[i,idx_theta] * (N-n[K]) + eta_theta[i,] * n[K]) / N
+            centrds_theta[i,] <- (centrds_theta[i,idx_theta] * (N-n) + eta_theta[i,] * n) / N
           }
           
           idx_sigma<-sapply(1:L_sigma,function(l){
             which.min(abs(eta_sigma[1,l] - centrds_sigma[1,]))
           })
           for(i in 1:d){
-            centrds_sigma[i,] <- (centrds_sigma[i,idx_sigma] * (N-n[K]) + eta_sigma[i,] * n[K]) / N
+            centrds_sigma[i,] <- (centrds_sigma[i,idx_sigma] * (N-n) + eta_sigma[i,] * n) / N
           }
           
         }
@@ -778,16 +755,16 @@ source('FNS/FNS_SmoBack.R')
         # backfitting
         {
           res_beta <- backfitting(beta0_theta, beta_theta,U_theta[,,idx_theta[1]],V_theta[,,,idx_theta[1]],
-                                  Q_theta[,,,idx_theta[1]],R_theta[,,,,idx_theta[1]], n[K], N, h_theta, pd2)
-          if(res_beta$delta < delta_stop_outer_theta){
+                                  Q_theta[,,,idx_theta[1]],R_theta[,,,,idx_theta[1]], n, N, h_theta, pd2)
+          if(res_beta$delta < delta_outer){
             beta0_theta <- res_beta$beta0
             beta_theta <- res_beta$beta
           }
           rm(res_beta)
           
           res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma[,,idx_sigma[1]],V_sigma[,,,idx_sigma[1]],
-                                  Q_sigma[,,,idx_sigma[1]],R_sigma[,,,,idx_sigma[1]], n[K], N, h_sigma, pd1)
-          if(res_beta$delta < delta_stop_outer_sigma){
+                                  Q_sigma[,,,idx_sigma[1]],R_sigma[,,,,idx_sigma[1]], n, N, h_sigma, pd1)
+          if(res_beta$delta < delta_outer){
             beta0_sigma <- res_beta$beta0
             beta_sigma <- res_beta$beta
           }
@@ -797,23 +774,25 @@ source('FNS/FNS_SmoBack.R')
         # compute the constants
         {
           deri <- beta_theta[,(2*d+1):(3*d)]^2
+          deri_ <- cbind(deri_, beta_theta[,(2*d+1):(3*d)])
           beta_hat <- matrix(0,nrow(X),d); sigma2 <- rep(0,d)
           for(i in 1:d){
             beta_hat[,i] <- predict(smooth.spline(eval_vec,beta_sigma[,i]),X[,i])$y
           }
-          # sigma2 <- mean(exp(rowSums(beta_hat[,(1:d)])+beta0_sigma))
+          sigma2 <- c()
           for(i in 1:d){
-            sigma2[i] <- mean(exp(beta_hat[,(1:d)[-i]]))*mean(exp(-beta_sigma[,i]))*exp(-beta0_sigma)
+            sigma2 <- cbind(sigma2,exp(beta_sigma[,(1:d)[-i]]-beta0_sigma))
           }
+          sigma2_ <- cbind(sigma2_, sigma2) 
           
-          Ch <- (15 * sigma2/colMeans(deri))^(1/5)
+          Ch <- (15 * sigma2[4:22,]/colMeans(deri[4:22,]))^(1/5)
           C <- cbind(C, Ch)
         }
         
         # update statistics
         {
           res_update <- update_stats(U_theta,V_theta,Q_theta,R_theta, beta0_theta,beta_theta,eta_theta,
-                                     idx_theta,n[K],N,pd2,L_theta)
+                                     idx_theta,n,N,pd2,L_theta)
           U_theta <- res_update$U_
           V_theta <- res_update$V_
           Q_theta <- res_update$Q_
@@ -821,7 +800,7 @@ source('FNS/FNS_SmoBack.R')
           rm(res_update)
           
           res_update <- update_stats(U_sigma,V_sigma,Q_sigma,R_sigma, beta0_sigma,beta_sigma,eta_sigma,
-                                     idx_sigma,n[K],N,pd1,L_sigma)
+                                     idx_sigma,n,N,pd1,L_sigma)
           U_sigma <- res_update$U_
           V_sigma <- res_update$V_
           Q_sigma <- res_update$Q_
@@ -834,10 +813,11 @@ source('FNS/FNS_SmoBack.R')
       print(paste('K=',K))
     }
     
+    if(Kmax==600) break
     start <- Kmax
   }
   C1 <- C
-  save(C1,  file = 'res/flight/online_constants_for_bandwidths.Rdata')
+  save(C1, deri_, sigma2_, file = 'res/flight/online_constants_for_bandwidths1.Rdata')
 }
 
 ######### batch band select
@@ -876,8 +856,8 @@ source('FNS/FNS_SmoBack.R')
       
       # delta_stop
       {
-        delta_stop_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
-        delta_stop_outer <- delta_stop_inner
+        delta_inner <- 0.01*(K<=10)+0.001*(10<K&K<=30)+1e-04*(K>30)
+        delta_outer <- delta_inner
       }
 
       # bandwidth selection
@@ -902,7 +882,7 @@ source('FNS/FNS_SmoBack.R')
         {
           res_beta <- backfitting(beta0_theta, beta_theta,U_theta,V_theta,
                                   Q_theta,R_theta, N, N, h_theta, pd2)
-          if(res_beta$delta < delta_stop_outer_theta){
+          if(res_beta$delta < delta_outer){
             beta0_theta <- res_beta$beta0
             beta_theta <- res_beta$beta
           }
@@ -910,7 +890,7 @@ source('FNS/FNS_SmoBack.R')
           
           res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma,V_sigma,
                                   Q_sigma,R_sigma, N, N, h_sigma, pd1)
-          if(res_beta$delta < delta_stop_outer_sigma){
+          if(res_beta$delta < delta_outer){
             beta0_sigma <- res_beta$beta0
             beta_sigma <- res_beta$beta
           }
@@ -980,9 +960,9 @@ source('FNS/FNS_SmoBack_credit.R')
   set.seed(111)
   idx <- sample(1:Nfull,Ntrain)
   ytrain <- data$badloan[idx]
-  Xtrain <- as.matrix(data[idx,c('loan_amnt','int_rate','dti','total_pymnt')])
+  Xtrain <- as.matrix(data[idx,c('loan_amnt','int_rate','dti','annual_inc')])
   ytest <- data$badloan[(1:Nfull)[-idx]]
-  Xtest <- as.matrix(data[(1:Nfull)[-idx],c('loan_amnt','int_rate','dti','total_pymnt')])
+  Xtest <- as.matrix(data[(1:Nfull)[-idx],c('loan_amnt','int_rate','dti','annual_inc')])
   rm(idx)
 }
 
@@ -990,7 +970,7 @@ source('FNS/FNS_SmoBack_credit.R')
 {
   pd1 <- 1; pd2 <- 3
   d <- 4
-  
+  G <- rep(1,d)
   m <- 16 # No evalpoints
   eval_vec <- seq(0.05, 0.95, length.out = m)
   
@@ -999,10 +979,10 @@ source('FNS/FNS_SmoBack_credit.R')
   L_theta <- 5; L_sigma <- 5
   link <- 'logit'
   
-  nn <- rep(1000,867)
-  nn[1] <- 3000
-  Kmax <- length(nn)
-  nn[Kmax] <- Ntrain-sum(nn[1:(Kmax-1)])
+  n <- rep(1000,867)
+  n[1] <- 3000
+  Kmax <- length(n)
+  n[Kmax] <- Ntrain-sum(n[1:(Kmax-1)])
   
 }
 
@@ -1018,13 +998,13 @@ source('FNS/FNS_SmoBack_credit.R')
     V_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,m^d,L_sigma)) 
     Q_sigma <- array(0, dim = c(pd1*d+1,pd1*d+1,m^d,L_sigma))
     R_sigma <- 0
-    C <- c()
+    C <- c(); N <- 0; sigma2_ <- c(); deri_ <- c()
   }  
   
   for (K in 1:K_band) {
     
-    X <- as.matrix(Xtrain[(NN+1):(NN+nn[K]),])
-    y <- ytrain[(NN+1):(NN+nn[K])]
+    X <- as.matrix(Xtrain[(N+1):(N+n[K]),])
+    y <- ytrain[(N+1):(N+n[K])]
     
     # delta
     delta_inner <- 0.01*(K<=10)+0.001*(10<K&K<=50)+1e-04*(K>50)
@@ -1032,6 +1012,7 @@ source('FNS/FNS_SmoBack_credit.R')
     delta_outer <- 0.1*(K<=20)+0.01*(20<K&K<=50)+1e-03*(K>50)
     
     # bandwidth selection
+    N <- N + n[K]
     h_theta <- G * N^(-1/7); h_sigma <- G * N^(-1/5)
     eta_theta <- sapply(1:L_theta, function(l){((L_theta-l+1)/L_theta)^(1/7) * h_theta})#dim: d*L
     eta_sigma <- sapply(1:L_sigma, function(l){((L_sigma-l+1)/L_sigma)^(1/5) * h_sigma})
@@ -1078,7 +1059,7 @@ source('FNS/FNS_SmoBack_credit.R')
     {
       res_beta <- backfitting(beta0_theta, beta_theta,U_theta[,,idx_theta[1]],V_theta[,,,idx_theta[1]],
                               Q_theta[,,,idx_theta[1]],R_theta, n[K], N, h_theta, pd2)
-      if(res_beta$delta < delta_stop_outer_theta){
+      if(res_beta$delta < delta_outer){
         beta0_theta <- res_beta$beta0
         beta_theta <- res_beta$beta
       }
@@ -1086,7 +1067,7 @@ source('FNS/FNS_SmoBack_credit.R')
       
       res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma[,,idx_sigma[1]],V_sigma[,,,idx_sigma[1]],
                               Q_sigma[,,,idx_sigma[1]],R_sigma[,,,,idx_sigma[1]], n[K], N, h_sigma, pd1)
-      if(res_beta$delta < delta_stop_outer_sigma){
+      if(res_beta$delta < delta_outer){
         beta0_sigma <- res_beta$beta0
         beta_sigma <- res_beta$beta
       }
@@ -1096,14 +1077,15 @@ source('FNS/FNS_SmoBack_credit.R')
     # compute the constants
     {
       deri <- beta_theta[,(2*d+1):(3*d)]^2
+      deri_ <- cbind(deri_, deri)
       beta_hat <- matrix(0,nrow(X),d); sigma2 <- rep(0,d)
       for(i in 1:d){
         beta_hat[,i] <- predict(smooth.spline(eval_vec,beta_sigma[,i]),X[,i])$y
       }
-      sigma2 <- mean((y-rowSums(beta_hat[,(1:d)])-beta0_sigma)^2)
-      # for(i in 1:d){
-      #   sigma2[i] <- mean(exp(beta_hat[,(1:d)[-i]]))*mean(exp(beta_sigma[,i]))*exp(beta0_sigma)
-      # }
+      for(i in 1:d){
+        sigma2[i] <- mean(exp(beta_hat[,(1:d)[-i]]))*mean(exp(-beta_sigma[,i]))*exp(-beta0_sigma)
+        sigma2_ <- cbind(sigma2_, exp(beta_sigma[,(1:d)[-i]]-beta0_sigma)) 
+      }
       
       Ch <- (15 * sigma2/colMeans(deri))^(1/5)
       C <- cbind(C, Ch)
@@ -1131,7 +1113,7 @@ source('FNS/FNS_SmoBack_credit.R')
   }
   
   C1 <- C
-  save(C1, file='res/credit/online_constants_for_bandwidths.Rdata')
+  save(C1, sigma2_, deri_, file='res/credit/online_constants_for_bandwidths.Rdata')
   
 }
 
@@ -1183,7 +1165,7 @@ source('FNS/FNS_SmoBack_credit.R')
       {
         res_beta <- backfitting(beta0_theta, beta_theta,U_theta,V_theta,
                                 Q_theta,R_theta, N, N, h_theta, pd2)
-        if(res_beta$delta < delta_stop_outer){
+        if(res_beta$delta < delta_outer){
           beta0_theta <- res_beta$beta0
           beta_theta <- res_beta$beta
         }
@@ -1191,7 +1173,7 @@ source('FNS/FNS_SmoBack_credit.R')
         
         res_beta <- backfitting(beta0_sigma, beta_sigma,U_sigma,V_sigma,
                                 Q_sigma,R_sigma, N, N, h_sigma, pd1)
-        if(res_beta$delta < delta_stop_outer){
+        if(res_beta$delta < delta_outer){
           beta0_sigma <- res_beta$beta0
           beta_sigma <- res_beta$beta
         }
