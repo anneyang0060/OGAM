@@ -22,14 +22,14 @@
 
 #### Simulation 1 and 2
 
-1. Make sure that the R scripts *simulation1.R* and *simulation2.R* are in the same  directory as the folder *FNS*.
-2. As the bandwidth selection is not our focus, users can choose to run Section 1 and 2 of *supp-bandwidth_selection.R* to generate the constants for bandwidths or to load them directly in Step 3. If choose to load, make sure that the following files exist:
+1. Make sure that the R scripts ***simulation1.R*** and ***simulation2.R*** are in the same  directory as the folder ***FNS***.
+2. As the bandwidth selection is not our focus, users can choose to run Section 1 and 2 of ***supp-bandwidth_selection.R*** to generate the constants for bandwidths or to load them directly in Step 3. If choose to load them, make sure that the following files exist:
 - *res/sim1/online_constants_for_bandwidths.Rdata*
 - *res/sim1/batch_constants_for_bandwidths.Rdata*
 - *res/sim2/online_constants_for_bandwidths.Rdata*
 - *res/sim2/batch_constants_for_bandwidths.Rdata*
-3. Run the R scripts *simulation1.R* and *simulation2.R* which will load the constants for bandwidths  and call functions in the folder *FNS* to compute the integrated mean square errors of the online and batch estimates as well as computing times. The corresponding results will be stored in the directory *res/sim1* and directory *res/sim2*. 
-5. Run the R scripts *simu_figplot.R* to generate **Figure 4-7**. 
+3. Run the R scripts ***simulation1.R*** and ***simulation2.R*** which will load the constants for bandwidths  and call functions in the folder ***FNS*** to compute the integrated mean square errors of the online and batch estimates as well as computing times. The corresponding results will be stored in the directory ***res/sim1*** and directory ***res/sim2***. 
+5. Run the R scripts ***simu_figplot.R*** to generate **Figure 4-7**. 
 
 As the bandwidth selection is not our focus, all procedures of estimating the constants for bandwidths in the simulations and data applications are collected in the R script ***supp-bandwidth_selection.R***. The corresponding results are stored in the directory *res*. One can load them directly when reproducing the numerical experiments.
 
