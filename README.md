@@ -22,10 +22,9 @@
 
 #### Simulation 1 and 2
 
-1. Make sure that the R scripts ***simulation1.R*** (***simulation2.R***) is in the same  directory as the folder *FNS*.
-2. Run the R scripts ***simulation1.R*** (***simulation2.R***) which will call functions in the folder *FNS* to compute the integrated mean square errors of the online and batch estimates as well as computing time of simulation 1 (simulation 2). The corresponding results will be stored in  
-
-The R scripts ***simu_figplot.R*** and ***simulation2_figplot.R*** contain the code to generate **Figure 4-7**. 
+1. Make sure that the R scripts *simulation1.R* (*simulation2.R*) is in the same  directory as the folder *FNS*.
+2. Run the R scripts *simulation1.R* (*simulation2.R*) which will call functions in the folder *FNS* to compute the integrated mean square errors of the online and batch estimates as well as computing time of simulation 1 (simulation 2). The corresponding results will be stored in the directory *res/sim1*. 
+3. Run the R scripts *simu_figplot.R* and *simulation2_figplot.R* contain the code to generate **Figure 4-7**. 
 
 As the bandwidth selection is not our focus, all procedures of estimating the constants for bandwidths in the simulations and data applications are collected in the R script ***supp-bandwidth_selection.R***. The corresponding results are stored in the directory *res*. One can load them directly when reproducing the numerical experiments.
 
