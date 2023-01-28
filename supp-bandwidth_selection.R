@@ -2,7 +2,7 @@ setwd('.../OGAM')
 library(foreach)
 library(doParallel)
 
-############################### bandwidth selection for Simulation1 #########################
+############################### Section 1 : bandwidth selection for Simulation1 #########################
 rm(list = ls())
 source('FNS/FNS_SmoBack.R')
 source('FNS/FNS_DataGene_Simu1.R')
@@ -322,7 +322,7 @@ source('FNS/FNS_DataGene_Simu1.R')
 #######################################################################
 
 
-############################### bandwidth selection for Simulation2 #########################
+############################### Section 2 : bandwidth selection for Simulation2 #########################
 rm(list = ls())
 source('FNS/FNS_SmoBack.R')
 source('FNS/FNS_DataGene_Simu2.R')
@@ -649,7 +649,7 @@ source('FNS/FNS_DataGene_Simu2.R')
 #######################################################################
 
 
-############################### bandwidth selection for flight #########################
+############################### Section 3 : bandwidth selection for flight #########################
 rm(list = ls())
 source('FNS/FNS_SmoBack.R')
 
@@ -927,7 +927,7 @@ source('FNS/FNS_SmoBack.R')
 #######################################################################
 
 
-############################### bandwidth selection for credit #########################
+############################### Section 4 : bandwidth selection for credit #########################
 source('FNS/FNS_SmoBack_credit.R')
 
 # read in data
