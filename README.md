@@ -2,7 +2,7 @@
 
 ### Overview
 
-1. Directory *FNS* contains the main functions for the simulations and data applications. Specifically,
+1. Directory *FNS* contains the main functions which are called for the simulations and data applications. Specifically,
 - *FNS_DataGene_Simu1* : function to generate data for simulation 1
 - *FNS_DataGene_Simu2* : function to generate data for simulation 2
 - *FNS_SmoBack* : functions to conduct smoothbackfitting
@@ -18,11 +18,12 @@
 
 5. Directory *Compare_Code* contains the code for simulation 3 to compare with other online nonparametric methods in the degenerated one-dimensional case.
 
-### Simulations
+### Workflows
 
 #### Simulation 1 and 2
 
-The R scripts ***simulation1.R*** and ***simulation2.R*** contain the code for the simulation study which computes the integrated mean square errors of the online and batch estimates as well as computing time, respectively. 
+1. Make sure that the R scripts ***simulation1.R*** (***simulation2.R***) is in the same  directory as the folder *FNS*.
+2. Run the R scripts ***simulation1.R*** (***simulation2.R***) which will call functions in the folder *FNS* to compute the integrated mean square errors of the online and batch estimates as well as computing time of simulation 1 (simulation 2). The corresponding results will be stored in  
 
 The R scripts ***simu_figplot.R*** and ***simulation2_figplot.R*** contain the code to generate **Figure 4-7**. 
 
