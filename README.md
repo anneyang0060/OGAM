@@ -31,11 +31,10 @@
 3. Run the R scripts ***simulation1.R*** and ***simulation2.R*** which will load the constants for bandwidths  and call functions in the folder ***FNS*** to compute the integrated mean square errors of the online and batch estimates as well as computing times. The corresponding results will be stored in the directory ***res/sim1*** and directory ***res/sim2***. 
 5. Run the R scripts ***simu_figplot.R*** to generate **Figure 4-7**. 
 
-#### Simulation 3
+#### Simulation 3 in the supplementary materials
 
-The R script ***Compare_Code/simuscript.R*** contains the code to compute the integrated mean square errors of different online nonparametric methods in the degenerated one-dimensional case.
-
-The R script ***Compare_Code/figplot.R*** contains the code to generate **Figure 1** of the supplement.
+1. Run the R script ***Compare_Code/simuscript.R*** which will compute the integrated mean square errors of different online nonparametric methods in the degenerated one-dimensional case.
+2. Run the R script ***Compare_Code/figplot.R*** to generate **Figure 1** of the supplement.
 
 ### Data applications
 
