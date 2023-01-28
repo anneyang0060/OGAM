@@ -8,7 +8,7 @@
 - *FNS_SmoBack* : functions to conduct smoothbackfitting
 - *FNS_SmoBack_credit* : differs from *FNS_SmoBack* only in the stopping criterion
 
-2. Directory *datasets* contains the datasets *credit* and *flight* for data applications. Due to the upload restrictions, we provide the preprocessed data here, which are seperated into several parts. Please **merge them before processing**. Raw data are available in the following links:
+2. Directory *datasets* contains the preprocessed datasets *credit* and *flight* for data applications. Raw data are available in the following links:
 - *credit* : https://data.mendeley.com/datasets/wb3ndt69gf (P2P_Macro_Data.dta, 3 GB)
 - *flight* : https://community.amstat.org/jointscsg-section/dataexpo/dataexpo2009
 
@@ -36,10 +36,12 @@
 1. Run the R script ***Compare_Code/simuscript.R*** which will compute the integrated mean square errors of different online nonparametric methods in the degenerated one-dimensional case.
 2. Run the R script ***Compare_Code/figplot.R*** to generate **Figure 1** of the supplement.
 
-### Data applications
+#### Data application 1: flight
+1. Due to the upload restrictions, we provide the preprocessed data here, which are seperated into several parts. Run ***datasets/flight/flight_merge.R*** to merge them or download the raw csv data from the link in the *Overview* to the directory ***datasets/flight*** and run ***datasets/flight/flight_preprocess.R*** to preprocess the raw csv data.
+2. Run the R script ***flight_main.R*** which will compute the online and batch estimates as well as computing time for the two datasets, respectively. The corresponding results will be stored in the directory ***res/flight***. 
+3. Run the R script ***flight_figplot.R*** to generate **table 1** and **Figure 8** 
 
-The R scripts ***flight_preprocess.R*** contains the code to preprocess the raw csv data which can be downloaded from the above link. The preprocessed data are given in the Directory *datasets*.
-
-The R scripts ***flight_main.R*** and ***credit_main.R*** contain the code which computes the online and batch estimates as well as computing time for the two datasets, respectively. 
-
-The R scripts ***flight_figplot.R*** contains the code to generate **table 1** and **Figure 8** and ***credit_figplot.R*** contains the code to generate **table 1** and **Figure 8** contains the code to generate **table 2** and **Figure 9**. 
+#### Data application 2: credit
+1. Run ***datasets/credit/credit_merge.R*** to merge the seperated preprocessed data or download the raw csv data from the link in the *Overview* to the directory ***datasets/credit*** and run ***datasets/credit/credit_preprocess.R*** to preprocess the raw csv data.
+2. Run the R script ***credit_main.R*** which will compute the online and batch estimates as well as computing time for the two datasets, respectively. The corresponding results will be stored in the directory ***res/credit***. 
+3. Run the R script ***credit_figplot.R*** to generate **table 2** and **Figure 9**. 
