@@ -1,4 +1,4 @@
-setwd('/home/yangy/gam/Compare_Code')
+setwd('.../OGAM/Compare_Code')
 source('Common/helpers.R')
 source('Common/OPLS.R')
 source('Common/batchrun.R')
