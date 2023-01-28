@@ -41,7 +41,7 @@
 2. As the bandwidth selection is not our focus, users can choose to run Section 3 of ***supp-bandwidth_selection.R*** to generate the constants for bandwidths or to load them directly in Step 3 for convenience. If choose to load them, make sure that the following files exist:
 - *res/flight/online_constants_for_bandwidths.Rdata*
 - *res/flight/batch_constants_for_bandwidths.Rdata*
-3. Run the R script ***flight_main.R*** which will compute the online and batch estimates as well as computing time for the two datasets, respectively. The corresponding results will be stored in the directory ***res/flight***. 
+3. Run the R script ***flight_main.R*** which will compute the online and batch estimates as well as computing times. The corresponding results will be stored in the directory ***res/flight***. 
 4. Run the R script ***flight_figplot.R*** to generate **table 1** and **Figure 8** 
 
 #### Data application 2: credit
@@ -49,5 +49,5 @@
 2. Run Section 4 of ***supp-bandwidth_selection.R*** to generate the constants for bandwidths, or load them directly in Step 3 for convenience. If choose to load them, make sure that the following files exist:
 - *res/credit/online_constants_for_bandwidths.Rdata*
 - *res/credit/batch_constants_for_bandwidths.Rdata*
-3. Run the R script ***credit_main.R*** which will compute the online and batch estimates as well as computing time for the two datasets, respectively. The corresponding results will be stored in the directory ***res/credit***. 
+3. Run the R script ***credit_main.R*** which will compute the online and batch estimates as well as computing times. The corresponding results will be stored in the directory ***res/credit***. 
 4. Run the R script ***credit_figplot.R*** to generate **table 2** and **Figure 9**. 
