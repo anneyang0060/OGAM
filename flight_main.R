@@ -2,23 +2,35 @@ setwd('.../OGAM')
 source('FNS/FNS_SmoBack.R')
 
 #### parameter
+#' @param pd1=1 corresponds to local linear smoothing
+#' @param d the model dimension
+#' @param m number of evaluation points
+#' @param Max_iter the maximal iteration steps for the algorithm
+#' @param K_band time to stop update the constant for bandwidth
+#' @param link the link function for the generalized additive model
 {
-  pd1 <- 1; pd2 <- 3
+  pd1 <- 1
   d <- 2
   m <- 25 # No evalpoints
   eval_vec <- seq(0.05, 0.95, length.out = m)
   Max_iter <- 10
-  N <- 0
-  pd1 <- 1  
   K_band <- 300
-  G <- rep(1,d)
-  L_theta <- 5; L_sigma <- 5
-  L <- 10
   link <- 'logit'
 }
 
-#### estimate
-# online: output the computing times for each update, the estimated component functions and the selected bandwidths
+#### online estimate
+#### input
+## L: the candidate sequence lengths
+## N: the accumulated sample size
+## start: the accumulated number of blocks
+#### output
+## time: the computing times for each update
+## beta0_store: the estimated intercept
+## beta_store: the estimated component functions 
+## band: the selected bandwidths
+L <- 10
+N <- 0
+start <- 0
 {
   # stored information
   time <- c()
@@ -26,7 +38,6 @@ source('FNS/FNS_SmoBack.R')
   beta_store <-c()
   band <- c()
   load('res/flight/online_constants_for_bandwidths.Rdata')
-  start <- 0
   
   for(year in 1996:2004){
     
@@ -137,7 +148,20 @@ source('FNS/FNS_SmoBack.R')
        file = 'res/flight/flight_full_online1.Rdata')
 }
 
-# batch: output the computing times for each update, the estimated component functions and the selected bandwidths
+#### batch estimation
+#### input
+## L: the candidate sequence lengths
+## N: the accumulated sample size
+## start: the accumulated number of blocks
+## sub_streams: time to conduct batch estimate
+#### output
+## time: the computing times for each update
+## beta0_store: the estimated intercept
+## beta_store: the estimated component functions 
+## band: the selected bandwidths
+L <- 1
+N <- 0
+start <- 0
 sub_streams <- c(1,seq(10,50,10),seq(100,1000,100), seq(1500,2500,500),3283)
 {
   # stored information
@@ -148,7 +172,6 @@ sub_streams <- c(1,seq(10,50,10),seq(100,1000,100), seq(1500,2500,500),3283)
   X <- c(); y <- c()
   band_select <- FALSE
   load('res/flight/batch_constants_for_bandwidths.Rdata')
-  start <- 0
   
   for(year in 1996:2004){
     
