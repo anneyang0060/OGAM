@@ -2,12 +2,30 @@ setwd('.../OGAM')
 library(foreach)
 library(doParallel)
 
+
+
 ############################### Section 1 : bandwidth selection for Simulation1 #########################
 rm(list = ls())
 source('FNS/FNS_SmoBack.R')
 source('FNS/FNS_DataGene_Simu1.R')
 
-# parameters
+### define input parameters
+#' @param R number of simulated replicates
+#' @param Kmax the total number of blocks
+#' @param sub_streams time to conduct batch estimate
+#' @param sds the seeds indices which are generated randomly
+#' @param n the sample size of each data block
+#' @param d the model dimension
+#' @param m number of evaluation points
+#' @param pd1=1 corresponds to local linear smoothing
+#' @param Max_iter the maximal iteration steps for the algorithm
+#' @param beta_true values of underlying true function at the evaluation points
+#' @param link the link function for the generalized additive model
+#' @param K_band time to stop update the constant for bandwidth
+#' @param pd2=3 corresponds to local cubic smoothing
+#' @param G pilot constant for bandwidths of estimating theta and sigma
+#' @param L_theta candidate sequence length of  of estimating theta
+#' @param L_sigma candidate sequence length of  of estimating sigma
 {
   R <- 100
   Kmax <- 1000
@@ -15,21 +33,16 @@ source('FNS/FNS_DataGene_Simu1.R')
   set.seed(2020)
   sds <- ceiling(runif(R)*1e6)
   n <- ceiling(rnorm(Kmax,500,10))
-  pd1 <- 1; pd2 <- 3
+  pd1 <- 1
   d <- 2
-  m <- 40 # No evalpoints
+  m <- 40
   eval_vec <- seq(0.05, 0.95, length.out = m)
-  
   Max_iter <- 50
   beta_true <- cbind(beta1_fun(eval_vec), beta2_fun(eval_vec),
                      beta1_fun_deri(eval_vec), beta2_fun_deri(eval_vec))
   link <- 'log'
-  
-  # beta0 <- 0
-  # beta <- matrix(0, m, (pd1+1)*d) # beta1,beta2,beta11,beta12
-  # h <- rep(1,d)
-  # load('constants for bandwidths.Rdata')
   K_band <- 200
+  pd2 <- 3
   G <- rep(0.5,d)
   L_theta <- 5; L_sigma <- 5
 }
@@ -327,37 +340,52 @@ rm(list = ls())
 source('FNS/FNS_SmoBack.R')
 source('FNS/FNS_DataGene_Simu2.R')
 
-# parameters
+
+### define input parameters
+#' @param R number of simulated replicates
+#' @param Kmax the total number of blocks
+#' @param sub_streams time to conduct batch estimate
+#' @param sds the seeds indices which are generated randomly
+#' @param n the sample size of each data block
+#' @param d the model dimension
+#' @param m number of evaluation points
+#' @param pd1=1 corresponds to local linear smoothing
+#' @param Max_iter the maximal iteration steps for the algorithm
+#' @param beta_true values of underlying true function at the evaluation points
+#' @param link the link function for the generalized additive model
+#' @param K_band time to stop update the constant for bandwidth
+#' @param pd2=3 corresponds to local cubic smoothing
+#' @param G pilot constant for bandwidths of estimating theta and sigma
+#' @param L_theta candidate sequence length of  of estimating theta
+#' @param L_sigma candidate sequence length of  of estimating sigma
 {
   R <- 100
   Kmax <- 600
   sub_streams <- c(1,seq(20,Kmax,20))
   set.seed(2020)
-  n <- ceiling(rnorm(Kmax,500,10))
-  n[1] <- 2000
-  pd1 <- 1; pd2 <- 3
+  n <- ceiling(rnorm(Kmax,500,10)); n[1] <- 2000
+  pd1 <- 1
   d <- 4
   m <- 25 # No evalpoints
   eval_vec <- seq(0.05, 0.95, length.out = m)
-  
   Max_iter <- 50
   N <- 0
   beta_true <- cbind(beta1_fun(eval_vec), beta2_fun(eval_vec),
                       beta3_fun(eval_vec), beta4_fun(eval_vec))
   link <- 'identity'
-  
   K_band=200
+  pd2 <- 3
   G <- rep(0.5,d)
   L_theta <- 3; L_sigma <- 3
+}
+
+######### online band select: output constant for bandwidth of the main regression
+{
   time<-c()
   beta0_store<-c()
   beta_store<-c()
   rss <- c()
   band <- c()
-}
-
-######### online band select
-{
   
   Mcl<-R
   cl<-makeCluster(Mcl)
@@ -523,7 +551,7 @@ source('FNS/FNS_DataGene_Simu2.R')
   
 }
 
-######### batch band select
+######### batch band select: output constant for bandwidth of the main regression
 {
   Mcl<-R
   cl<-makeCluster(Mcl)
@@ -654,22 +682,31 @@ rm(list = ls())
 source('FNS/FNS_SmoBack.R')
 
 #### parameter
+#' @param pd1=1 corresponds to local linear smoothing
+#' @param d the model dimension
+#' @param m number of evaluation points
+#' @param Max_iter the maximal iteration steps for the algorithm
+#' @param K_band time to stop update the constant for bandwidth
+#' @param link the link function for the generalized additive model
+#' @param pd2=3 corresponds to local cubic smoothing
+#' @param G pilot constant for bandwidths of estimating theta and sigma
+#' @param L_theta candidate sequence length of  of estimating theta
+#' @param L_sigma candidate sequence length of  of estimating sigma
 {
-  pd1 <- 1; pd2 <- 3
+  pd1 <- 1
   d <- 2
-  m <- 25 # No evalpoints
+  m <- 25 
   eval_vec <- seq(0.05, 0.95, length.out = m)
-  
   Max_iter <- 10
-  
   K_band <- 300
-  G <- rep(1,d)
-  L_theta <- 5; L_sigma <- 5
   L <- 10
   link <- 'logit'
+  pd2 <- 3
+  G <- rep(1,d)
+  L_theta <- 5; L_sigma <- 5
 }
 
-######### online band select
+######### online band select: output constant for bandwidth of the main regression
 {
   {
     U_theta <- array(0, dim = c(pd2*d+1,m^d,L_theta))
@@ -820,7 +857,7 @@ source('FNS/FNS_SmoBack.R')
   save(C1, deri_, sigma2_, file = 'res/flight/online_constants_for_bandwidths1.Rdata')
 }
 
-######### batch band select
+######### batch band select: output constant for bandwidth of the main regression
 {
   {
     U_theta <- array(0, dim = c(pd2*d+1,m^d))
@@ -967,26 +1004,35 @@ source('FNS/FNS_SmoBack_credit.R')
 }
 
 #### parameter
+#' @param d the model dimension
+#' @param m number of evaluation points
+#' @param Max_iter the maximal iteration steps for the algorithm
+#' @param K_band time to stop update the constant for bandwidth
+#' @param link the link function for the generalized additive model
+#' @param nn sample size of each data block
+#' @param Kmax final number of blocks
+#' @param pd2=3 corresponds to local cubic smoothing
+#' @param G pilot constant for bandwidths of estimating theta and sigma
+#' @param L_theta candidate sequence length of  of estimating theta
+#' @param L_sigma candidate sequence length of  of estimating sigma
 {
-  pd1 <- 1; pd2 <- 3
+  pd1 <- 1
   d <- 4
-  G <- rep(1,d)
-  m <- 16 # No evalpoints
+  m <- 16
   eval_vec <- seq(0.05, 0.95, length.out = m)
-  
   Max_iter <- 50
   K_band <- 200
-  L_theta <- 5; L_sigma <- 5
   link <- 'logit'
-  
   n <- rep(1000,867)
   n[1] <- 3000
   Kmax <- length(n)
   n[Kmax] <- Ntrain-sum(n[1:(Kmax-1)])
-  
+  pd2 <- 3
+  G <- rep(1,d)
+  L_theta <- 5; L_sigma <- 5
 }
 
-######### online band select
+######### online band select: output constant for bandwidth of the main regression
 {
 
   {
@@ -1117,7 +1163,7 @@ source('FNS/FNS_SmoBack_credit.R')
   
 }
 
-######### batch band select
+######### batch band select: output constant for bandwidth of the main regression
 {
   
   {
