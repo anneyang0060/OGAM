@@ -3,38 +3,51 @@ setwd('/home/yangy/gam')
 library(foreach)
 library(doParallel)
 
+# load related functions
 source('FNS/FNS_SmoBack.R')
 source('FNS/FNS_DataGene_Simu2.R')
 
-# define parameters
+### define input parameters
+#' @param R number of simulated replicates
+#' @param Kmax the total number of blocks
+#' @param sub_stream time to conduct batch estimate
+#' @param sds the seeds indices which are generated randomly
+#' @param n the sample size of each data block
+#' @param d the model dimension
+#' @param m number of evaluation points
+#' @param pd1=1 corresponds to local linear smoothing
+#' @param Max_iter the maximal iteration steps for the algorithm
+#' @param beta_true values of underlying true function at the evaluation points
+#' @param link the link function for the generalized additive model
+#' @param K_band time to stop update the constant for bandwidth
 {
   R <- 100
   Kmax <- 600
   sub_streams <- c(1,seq(20,Kmax,20))
   set.seed(2020)
-  n <- ceiling(rnorm(Kmax,500,10))
-  n[1] <- 2000
+  n <- ceiling(rnorm(Kmax,500,10)); n[1] <- 2000
   d <- 4
-  m <- 10 # No evalpoints
-  
+  m <- 10 
+  eval_vec <- seq(0.05, 0.95, length.out = m)
+  pd1 <- 1
   Max_iter <- 50
   N <- 0
-  eval_vec <- seq(0.05, 0.95, length.out = m)
   beta_true <- cbind(beta1_fun(eval_vec), beta2_fun(eval_vec), 
                      beta3_fun(eval_vec), beta4_fun(eval_vec))
   link <- 'identity'
-  
   K_band=200
-  G <- rep(0.5,d)
-  L_theta <- 3; L_sigma <- 3
-  pd1 <- 1
 }
 
 ############################### main regression #########################
 ######### online method
-#### Input: the candidate sequence lengths
-#### Output: the computing times for each update, the integrated mean squared errors and the selected bandwidths.
-load('res/sim2/online_constants_for_bandwidths.Rdata')
+#### Input: 
+## L: the candidate sequence lengths
+## N: initialize the accumulated sample size
+#### Output: 
+## time: the computing times for each update
+## rss: the integrated mean squared errors
+## band: the selected bandwidthsload('res/sim2/online_constants_for_bandwidths.Rdata')
+N <- 0
 for(L in c(3,5, 10))
 {
   Mcl<-100
@@ -146,10 +159,15 @@ for(L in c(3,5, 10))
 }
 
 ######### batch method
-#### Input: L=1 correponds to the batch method with no candidate bandwidth
-#### Output: the computing times for each update, the integrated mean squared errors and the selected bandwidths.
-load('res/sim2/batch_constants_for_bandwidths.Rdata')
+#### Input: 
+## L: the candidate sequence lengths
+## N: initialize the accumulated sample size
+#### Output: 
+## time: the computing times for each update
+## rss: the integrated mean squared errors
+## band: the selected bandwidthsload('res/sim2/batch_constants_for_bandwidths.Rdata')
 L <- 1
+N <- 0
 {
   
   Mcl<-100
