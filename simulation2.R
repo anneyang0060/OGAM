@@ -6,7 +6,7 @@ library(doParallel)
 source('FNS/FNS_SmoBack.R')
 source('FNS/FNS_DataGene_Simu2.R')
 
-# parameters
+# define parameters
 {
   R <- 100
   Kmax <- 600
@@ -31,7 +31,9 @@ source('FNS/FNS_DataGene_Simu2.R')
 }
 
 ############################### main regression #########################
-######### online 
+######### online method
+#### Input: the candidate sequence lengths
+#### Output: the computing times for each update, the integrated mean squared errors and the selected bandwidths.
 load('res/sim2/online_constants_for_bandwidths.Rdata')
 for(L in c(3,5, 10))
 {
@@ -143,7 +145,9 @@ for(L in c(3,5, 10))
   stopCluster(cl)
 }
 
-######### batch 
+######### batch method
+#### Input: L=1 correponds to the batch method with no candidate bandwidth
+#### Output: the computing times for each update, the integrated mean squared errors and the selected bandwidths.
 load('res/sim2/batch_constants_for_bandwidths.Rdata')
 L <- 1
 {
