@@ -42,7 +42,7 @@ source('FNS/FNS_DataGene_Simu1.R')
 ######### online method
 #### Input: 
 ## L: the candidate sequence lengths
-## N: initialize the accumulated sample size
+## N: the accumulated sample size
 #### Output: 
 ## time: the computing times for each update
 ## rss: the integrated mean squared errors
@@ -165,7 +165,7 @@ for(L in c(3,5,10))
 ######### batch method
 #### Input: 
 ## L=1 correponds to the batch method with only one candidate bandwidth
-## N: initialize the accumulated sample size
+## N: the accumulated sample size
 #### Output: 
 ## time: the computing times for each update
 ## rss: the integrated mean squared errors
