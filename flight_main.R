@@ -18,7 +18,7 @@ source('FNS/FNS_SmoBack.R')
 }
 
 #### estimate
-# online
+# online: output the computing times for each update, the estimated component functions and the selected bandwidths
 {
   # stored information
   time <- c()
@@ -137,7 +137,7 @@ source('FNS/FNS_SmoBack.R')
        file = 'res/flight/flight_full_online1.Rdata')
 }
 
-# batch
+# batch: output the computing times for each update, the estimated component functions and the selected bandwidths
 sub_streams <- c(1,seq(10,50,10),seq(100,1000,100), seq(1500,2500,500),3283)
 {
   # stored information
