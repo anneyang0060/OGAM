@@ -13,8 +13,8 @@
 - *flight* : https://community.amstat.org/jointscsg-section/dataexpo/dataexpo2009
 
 3. Directory *res* contains the analysis results of the simulations and data applications. Specifically,
-- *sim1*: Numerical results of simulation setting 1, including the batch estimates (batch_gam_1.Rdata--batch_gam_100.Rdata) and the online estimates  (online_gam_L'X'_1.Rdata--online_gam_L'X'_.Rdata) with different candidate sequence lengths X=3,5,10.
-- *sim2*: Numerical results of simulation setting 2, including the batch estimates (batch_gam_1.Rdata--batch_gam_100.Rdata) and the online estimates  (online_gam_L'X'_1.Rdata--online_gam_L'X'_.Rdata) with different candidate sequence lengths X=3,5,10.
+- *sim1*: Numerical results of simulation setting 1, including the constants for bandwidths (batch_constants_for_bandwidths.Rdata and online_constants_for_bandwidths.Rdata), the batch estimates (batch_gam_1.Rdata--batch_gam_100.Rdata) and the online estimates  (online_gam_L'X'_1.Rdata--online_gam_L'X'_100.Rdata) with different candidate sequence lengths X=3,5,10.
+- *sim2*: Numerical results of simulation setting 2, including the constants for bandwidths (batch_constants_for_bandwidths.Rdata and online_constants_for_bandwidths.Rdata), the batch estimates (batch_gam_1.Rdata--batch_gam_100.Rdata) and the online estimates  (online_gam_L'X'_1.Rdata--online_gam_L'X'_100.Rdata) with different candidate sequence lengths X=3,5,10.
 - *flight*: Numerical results of the flight dataset analysis.
 - *credit*: Numerical results of the credit dataset analysis.
 
