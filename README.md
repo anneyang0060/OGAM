@@ -63,7 +63,7 @@
 2. Run the R script ***Compare_Code/figplot.R*** to generate **Figure 1** of the supplement.
 
 #### Data application 1: the flight dataset
-1. Due to the upload restrictions, we provide the preprocessed data here, which are seperated into several parts. Run ***datasets/flight/flight_merge.R*** to merge them or download the raw csv data from the link in the *Overview* to the directory ***datasets/flight*** and run ***datasets/flight/flight_preprocess.R*** to preprocess the raw csv data.
+1. Due to the upload restrictions, we provide the preprocessed data here, which are separated into several parts. Run ***datasets/flight/flight_merge.R*** to merge them or download the raw csv data from the link in the *Overview* to the directory ***datasets/flight*** and run ***datasets/flight/flight_preprocess.R*** to preprocess the raw csv data.
 2. As the bandwidth selection is not our focus, users can choose to run Section 3 of ***supp-bandwidth_selection.R*** to generate the constants for bandwidths or to load them directly in Step 3 for convenience. If choose to load them, make sure that the following files exist:
 - *res/flight/online_constants_for_bandwidths.Rdata*
 - *res/flight/batch_constants_for_bandwidths.Rdata*
@@ -71,7 +71,7 @@
 4. Run the R script ***flight_figplot.R*** to generate **table 1** and **Figure 8** 
 
 #### Data application 2: the credit dataset
-1. Run ***datasets/credit/credit_merge.R*** to merge the seperated preprocessed data or download the raw csv data from the link in the *Overview* to the directory ***datasets/credit*** and run ***datasets/credit/credit_preprocess.R*** to preprocess the raw csv data.
+1. Run ***datasets/credit/credit_merge.R*** to merge the separated preprocessed data or download the raw csv data from the link in the *Overview* to the directory ***datasets/credit*** and run ***datasets/credit/credit_preprocess.R*** to preprocess the raw csv data.
 2. Run Section 4 of ***supp-bandwidth_selection.R*** to generate the constants for bandwidths, or load them directly in Step 3 for convenience. If choose to load them, make sure that the following files exist:
 - *res/credit/online_constants_for_bandwidths.Rdata*
 - *res/credit/batch_constants_for_bandwidths.Rdata*
