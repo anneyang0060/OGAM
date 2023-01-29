@@ -3,18 +3,21 @@
 ### Overview
 
 1. Directory *FNS* contains the main functions which are called for the simulations and data applications. Specifically,
-- *FNS_DataGene_Simu1* : function to generate data for simulation 1
-- *FNS_DataGene_Simu2* : function to generate data for simulation 2
-- *FNS_SmoBack* : functions to conduct smoothbackfitting
-- *FNS_SmoBack_credit* : differs from *FNS_SmoBack* only in the stopping criterion
+- *FNS_DataGene_Simu1* : function to generate data for simulation setting 1.
+- *FNS_DataGene_Simu2* : function to generate data for simulation setting 2.
+- *FNS_SmoBack* : functions to conduct smoothbackfitting.
+- *FNS_SmoBack_credit* : differs from *FNS_SmoBack* only in the stopping criterion.
 
 2. Directory *datasets* contains the preprocessed datasets *credit* and *flight* for data applications. Raw data are available in the following links:
 - *credit* : https://data.mendeley.com/datasets/wb3ndt69gf (P2P_Macro_Data.dta, 3 GB)
 - *flight* : https://community.amstat.org/jointscsg-section/dataexpo/dataexpo2009
 
 3. Directory *res* contains the analysis results of the simulations and data applications. Specifically,
+
 - *sim1*: Numerical results of simulation setting 1, including the constants for bandwidths (batch_constants_for_bandwidths.Rdata and online_constants_for_bandwidths.Rdata), the batch estimates (batch_gam_1.Rdata--batch_gam_100.Rdata) and the online estimates  (online_gam_L'X'_1.Rdata--online_gam_L'X'_100.Rdata) with different candidate sequence lengths X=3,5,10.
+
 - *sim2*: Numerical results of simulation setting 2, including the constants for bandwidths (batch_constants_for_bandwidths.Rdata and online_constants_for_bandwidths.Rdata), the batch estimates (batch_gam_1.Rdata--batch_gam_100.Rdata) and the online estimates  (online_gam_L'X'_1.Rdata--online_gam_L'X'_100.Rdata) with different candidate sequence lengths X=3,5,10.
+
 - *flight*: Numerical results of the flight dataset analysis.
 - *credit*: Numerical results of the credit dataset analysis.
 
