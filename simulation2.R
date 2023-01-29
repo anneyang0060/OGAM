@@ -1,4 +1,4 @@
-setwd('/home/yangy/gam')
+setwd('.../OGAM')
 
 library(foreach)
 library(doParallel)
