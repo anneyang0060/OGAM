@@ -10,7 +10,7 @@ source('FNS/FNS_DataGene_Simu1.R')
 ### define input parameters
 #' @param R number of simulated replicates
 #' @param Kmax the total number of blocks
-#' @param sub_stream time to conduct batch estimate
+#' @param sub_streams time to conduct batch estimate
 #' @param sds the seeds indices which are generated randomly
 #' @param n the sample size of each data block
 #' @param d the model dimension
