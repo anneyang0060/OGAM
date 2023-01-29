@@ -35,7 +35,7 @@ source('FNS/FNS_SmoBack_credit.R')
   nn[Kmax] <- Ntrain-sum(nn[1:(Kmax-1)])
 }
 
-#### online estimate
+#### online estimation
 #### input
 ## L: the candidate sequence lengths
 ## NN: the accumulated sample size
@@ -82,7 +82,19 @@ NN <- 0
        file = 'res/credit/credit_online.Rdata')
 }
 
-# batch: output the computing times for each update, the estimated component functions and the selected bandwidths
+#### batch estiamtion
+#### input
+## L: the candidate sequence lengths
+## NN: the accumulated sample size
+## sub_streams: time to conduct batch estimate
+#### output
+## time: the computing times for each update
+## beta0_store: the estimated intercept
+## beta_store: the estimated component functions 
+## band: the selected bandwidths
+L <- 1
+NN <- 0
+sub_streams <- c(1, seq(20,180,20), seq(200,700,100), 822)
 {
   # stored information
   time <- c()
@@ -91,9 +103,7 @@ NN <- 0
   band <- c()
   band_select <- FALSE
   load('res/credit/batch_constants_for_bandwidths.Rdata')
-  NN <- 0
   X <- c(); y <- c()
-  sub_streams <- c(1, seq(20,180,20), seq(200,700,100), 822)
   
   for (K in 1:Kmax) {
     
