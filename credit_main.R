@@ -30,7 +30,7 @@ source('FNS/FNS_SmoBack_credit.R')
 }
 
 #### estimate
-# online
+# online: output the computing times for each update, the estimated component functions and the selected bandwidths
 {
   # stored information
   time <- c()
@@ -68,7 +68,7 @@ source('FNS/FNS_SmoBack_credit.R')
        file = 'res/credit/credit_online.Rdata')
 }
 
-# batch
+# batch: output the computing times for each update, the estimated component functions and the selected bandwidths
 {
   # stored information
   time <- c()
