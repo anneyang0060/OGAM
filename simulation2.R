@@ -11,7 +11,6 @@ source('FNS/FNS_DataGene_Simu2.R')
 #' @param R number of simulated replicates
 #' @param Kmax the total number of blocks
 #' @param sub_streams time to conduct batch estimate
-#' @param sds the seeds indices which are generated randomly
 #' @param n the sample size of each data block
 #' @param d the model dimension
 #' @param m number of evaluation points
