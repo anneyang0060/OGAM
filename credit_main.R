@@ -2,7 +2,7 @@ setwd(".../OGAM")
 library(MASS)
 source('FNS/FNS_SmoBack_credit.R')
 
-# read in data
+# read in data and set the training and test dataset
 {
   load('datasets/credit/P2P_Macro_Data_processed.Rdata')
   Nfull <- nrow(data)
@@ -17,20 +17,35 @@ source('FNS/FNS_SmoBack_credit.R')
 }
 
 #### parameter
+#' @param d the model dimension
+#' @param m number of evaluation points
+#' @param Max_iter the maximal iteration steps for the algorithm
+#' @param K_band time to stop update the constant for bandwidth
+#' @param link the link function for the generalized additive model
+#' @param nn sample size of each data block
+#' @param Kmax final number of blocks
 {
   d <- 4
   m <- 10 # No evalpoints
   Max_iter <- 50
   K_band <- 200
-  L <- 5
   link <- 'logit'
   nn <- rep(1000,822)
   Kmax <- length(nn)
   nn[Kmax] <- Ntrain-sum(nn[1:(Kmax-1)])
 }
 
-#### estimate
-# online: output the computing times for each update, the estimated component functions and the selected bandwidths
+#### online estimate
+#### input
+## L: the candidate sequence lengths
+## NN: the accumulated sample size
+#### output
+## time: the computing times for each update
+## beta0_store: the estimated intercept
+## beta_store: the estimated component functions 
+## band: the selected bandwidths
+L <- 5
+NN <- 0
 {
   # stored information
   time <- c()
@@ -39,7 +54,6 @@ source('FNS/FNS_SmoBack_credit.R')
   band <- c()
   band_select <- FALSE
   load('res/credit/online_constants_for_bandwidths.Rdata')
-  NN <- 0
 
   for (K in 1:Kmax) {
     
